@@ -5,7 +5,7 @@ const SignUp = () => {
 
     const sendEmailCode = async () => {
         const email = document.querySelector(".email-input").value;
-    
+        console.log(email);
         await api.post("/email/send", { email });
         alert("인증코드 발송!");
     }
@@ -13,7 +13,7 @@ const SignUp = () => {
     const verifyEmailCode = async () => {
         const email = document.querySelector(".email-input").value;
         const code = document.querySelector(".email-auth-code-input").value;
-    
+        
         await api.post("/email/verify", { email, code });
         alert("이메일 인증 완료!");
     }
@@ -38,7 +38,7 @@ const SignUp = () => {
                 id: id,
                 pw: password,
                 email: email,
-                // emailAuthCode,
+                emailAuthCode: emailAuthCode,
             });
             alert("가입이 완료되었습니다.");
         } catch (e) {
