@@ -20,14 +20,15 @@ export default function InquiryItem({ item }) {
                     </div>
                 </div>
                 <div className="inquiry-details">
-                    <p className="inquiry-title">{item.title}</p>
+                    <p className="my-inquiry-title">{item.title}</p>
                     <p className="inquiry-body-content">{item.content}</p>
                     <div className="inquiry-meta">
                         <p className="inquiry-date">{item.date}</p>
                         <span className="separator">|</span>
                         <div className="reply-status-group">
-                            <button className="view-response-btn" onClick={() => (item.response != null) && setShowResponse(!showResponse)}>{item.replyStatus == 0 ? "확인중" : "답변 완료"}
-                                {(item.response != null) && (showResponse ?
+                            <button className="view-response-btn" onClick={() => { if (item.response) { setShowResponse(!showResponse); } }}>
+                                {item.replyStatus === 0 ? "확인중" : "답변 완료"}
+                                {item.response && (showResponse ?
                                     <ChevronUpIcon className="nav-icon" />
                                     : <ChevronDownIcon className="nav-icon" />)
                                 }
@@ -35,11 +36,9 @@ export default function InquiryItem({ item }) {
                         </div>
                     </div>
 
-                    {showResponse && (
+                    {showResponse && item.response && (
                         <div className="response-section">
-                            <p>{item.response.greeting}</p>
-                            <p>{item.response.content}</p>
-                            <p>{item.response.closing}</p>
+                            <p>{item.response}</p>
                         </div>
                     )}
                 </div>

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import './OrderItemReviewPopup.css';
 import Rating from '@mui/material/Rating';
 
-function OrderItemReviewPopup() {
+function OrderItemReviewPopup({ productId, boardId, onClose }) {
     const [message, setMessage] = useState('');
     const [rating, setRating] = useState(0); // 최종 별점 상태 추가 (0 ~ 5)
     const [hoverRating, setHoverRating] = useState(0); // 별점 호버 상태값
@@ -11,6 +11,35 @@ function OrderItemReviewPopup() {
     const currentRatingText = (hoverRating > 0 || rating > 0)
         ? `${hoverRating > 0 ? hoverRating : rating}점` 
         : '별점을 선택해 주세요.';
+
+
+    const handleSubmit = async () => {
+        if (!message.trim() || !rating.trim()) {
+            alert("내용과 별점을 입력해주세요.");
+            return;
+        }
+    
+        try {    
+            await api.post("/review/write", {
+                boardId: boardId,
+                rating: rating,
+                productId: productId,
+            });
+    
+            alert("리뷰가 등록되었습니다.");
+            setMessage("");
+            setRating(0);
+
+            if (onClose) {
+                onClose();
+            }
+        } catch (err) {
+            console.error("리뷰 등록 실패:", err);
+            console.error("status:", err.response?.status);
+            console.error("data:", err.response?.data);
+            alert("리뷰 등록 중 오류가 발생했습니다.");
+        }
+    };
 
     return (
         <div className="inquiry-popup-container">
@@ -56,6 +85,7 @@ function OrderItemReviewPopup() {
                 <button
                     className="submit-button"
                     disabled={!message.trim()}
+                    onClick={handleSubmit}
                     // disabled={isSubmitDisabled}
                 >작성하기</button>
             </div>

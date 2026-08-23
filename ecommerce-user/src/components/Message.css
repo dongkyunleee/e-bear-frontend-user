@@ -1,15 +1,23 @@
 .message-box {
-    width: 105px;
-    height: 37px;
-    display: flex;
+    /* 기존 width/height 제거 및 유연한 크기 조절 설정 */
+    max-width: 220px;            /* 채팅창 가로폭(350px) 내에서 적절히 줄바꿈되도록 제한 */
+    min-height: 37px;            /* 짧은 메시지일 때 최소 높이 유지 */
+    display: inline-flex;
     align-items: center;
-    border-radius: 0px 20px 20px 20px;
-    justify-content: center;
-    background-color: #C2C2C2
+    padding: 10px 14px;          /* 말풍선 안쪽 여백 추가 */
+    box-sizing: border-box;      /* 패딩이 너비 계산에 포함되도록 설정 */
+    border-radius: 0px 16px 16px 16px;
+    background-color: #C2C2C2;
+    
+    /* 긴 텍스트 줄바꿈 설정 */
+    word-break: break-all;       /* 한글/영문 텍스트가 너비를 넘어갈 때 강제 개행 */
+    white-space: pre-wrap;       /* 사용자가 입력한 개행(엔터) 및 연속 공백 유지 */
+    font-size: 14px;
+    line-height: 1.4;
 }
 
 .is-me {
-    border-radius: 20px 0px 20px 20px;
+    border-radius: 16px 0px 16px 16px;
     background-color: #153085;
     color: white;
 }

@@ -2,46 +2,15 @@ import Navigation from "../components/Navigation"
 import Product from "../components/Product";
 import SideNavigation from "../components/SideNavigation"
 import "./ProductListPage.css"
+import { useParams } from "react-router-dom";
+import api from "../api/axios.js";
+import { useEffect, useState } from "react";
 
 const ProductListPage = () => {
+    const { id } = useParams(); 
+    const [productData, setProductData] = useState(null);
+    const [sideMenu, setSideMenu] = useState([]);
     
-    let sideMenu = [
-        {
-            title: "전체",
-            link: "/product/all",
-        },
-        {
-            title: "상의",
-            link: "/product/top",
-            subMenu: [
-                {
-                    title: "전체",
-                    link: "/product/top/all",
-                },{
-                    title: "티셔츠",
-                    link: "/product/top/t-shirt",
-                },{
-                    title: "블라우스/셔츠",
-                    link: "/product/top/shirt",
-                },{
-                    title: "니트/가디건",
-                    link: "/product/top/cardigan",
-                },
-            ]
-        },
-        {
-            title: "하의",
-            link: "/product/bottom",
-        },
-        {
-            title: "원피스",
-            link: "/product/onepiece",
-        },
-        {
-            title: "티셔츠",
-            link: "/product/t-shirt",
-        }
-    ];
 
     let navigationMenu = [
         {
@@ -66,47 +35,74 @@ const ProductListPage = () => {
         }
     ];
 
-    const productData = {
-        category : '여성의류',
-        products : [
-            {
-                id: 1,
-                imageUrl: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=100&h=100&fit=crop&crop=center",
-                brand: '유닉스',
-                name: '오브제 헤어 드라이기 UN-B1919N_1',
-                price: 89900,
-                salePercentage : null,
-                rating: null,
-            },
-            {
-                id: 2,
-                imageUrl: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=100&h=100&fit=crop&crop=center",
-                brand: '유닉스',
-                name: '오브제 헤어 드라이기 UN-B1919N_2',
-                price: 89900,
-                salePercentage : null,
-                rating: null,
-            },
-            {
-                id: 3,
-                imageUrl: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=100&h=100&fit=crop&crop=center",
-                brand: '유닉스',
-                name: '오브제 헤어 드라이기 UN-B1919_3',
-                price: 89900,
-                salePercentage : 20,
-                rating: null,
-            },
-            {
-                id: 4,
-                imageUrl: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=100&h=100&fit=crop&crop=center",
-                brand: '유닉스',
-                name: '오브제 헤어 드라이기 UN-B1919N_4',
-                price: 89900,
-                salePercentage : null,
-                rating: 5.0,
-                reviewCount: 3,
-            },
-        ]
+    const findCategoryPath = (categories, targetId, currentPath = []) => {
+        for (const cat of categories) {
+            const newPath = [...currentPath, cat];
+            
+            if (cat.categoryId === Number(targetId)) return newPath;
+            
+            if (cat.childCategory && cat.childCategory.length > 0) {
+                const foundPath = findCategoryPath(cat.childCategory, targetId, newPath);
+                if (foundPath) return foundPath;
+            }
+        }
+        return null;
+    };
+
+    const transformToSideMenu = (categoryList) => {
+        if (!categoryList || !Array.isArray(categoryList)) return [];
+        
+        return categoryList.map(item => {
+            const hasChildren = item.childCategory && item.childCategory.length > 0;
+            return {
+                title: item.categoryName,
+                link: `/product-list/${item.categoryId}`,
+                subMenu: hasChildren ? transformToSideMenu(item.childCategory) : null
+            };
+        });
+    };
+
+    useEffect(() => {
+        const fetchPageData = async () => {
+            try {
+                const prodResponse = await api.get(`/product/list?categoryId=${id}`);
+                prodResponse.data.products = prodResponse.data.products.map(product => ({
+                    ...product,
+                    imageUrl: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=100&h=100&fit=crop&crop=center",
+                }));
+                setProductData(prodResponse.data);
+
+                const catResponse = await api.get(`/category/list`);
+                const allCategories = catResponse.data;
+
+                const path = findCategoryPath(allCategories, id);
+                
+                if (path) {
+                    const baseNode = path.length >= 3 ? path[2] : path[path.length - 1];
+
+                    if (baseNode && baseNode.childCategory && baseNode.childCategory.length > 0) {
+                        const dynamicSideMenu = transformToSideMenu(baseNode.childCategory);
+                        setSideMenu([
+                            { title: "전체", link: `/product-list/${baseNode.categoryId}` },
+                            ...dynamicSideMenu
+                        ]);
+                    } else {
+                        setSideMenu([]); 
+                    }
+                } else {
+                    setSideMenu([]);
+                }
+
+            } catch (error) {
+                console.error("데이터를 불러오는 데 실패했습니다:", error);
+            }
+        };
+
+        fetchPageData();
+    }, [id]);
+
+    if (!productData) {
+        return <div className="ebear-container">로딩 중...</div>;
     }
 
     return (

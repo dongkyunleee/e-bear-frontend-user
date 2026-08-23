@@ -1,0 +1,211 @@
+/* eBEAR 스타일 */
+.ebear-container {
+    min-height: 100vh;
+    background-color: white;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+}
+
+/* 메인 레이아웃 */
+.main-layout {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+}
+
+/* 메인 콘텐츠 */
+.main-content {
+    flex: 1;
+    padding: 20px 30px;
+}
+
+.page-title {
+    border-bottom: 2px solid #1e40af;
+    padding-bottom: 8px;
+    margin-bottom: 24px;
+    max-width: 1280px;
+    display: flex;
+    justify-content: left;
+    margin: 0 auto;
+}
+
+.page-title h1 {
+    display: flex;
+    justify-content: center;
+    padding: 15px 0px;
+    font-size: 32px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+}
+
+.payment-product-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-top: 20px;
+}
+
+/* 개별 상품 카드 */
+.payment-product-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px;
+    border-radius: 12px;
+    background-color: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    cursor: pointer;
+    font-family: 'Pretendard', sans-serif;
+}
+
+.payment-product-image-container {
+    flex-shrink: 0;
+    width: 120px;
+    height: 120px;
+    overflow: hidden;
+    border-radius: 12px;
+    background-color: #f5f5f5;
+}
+
+.payment-product-image-container img {
+    width: 100%;
+    height: 100%;
+    /* 이미지가 컨테이너에 꽉 차도록 설정 */
+    object-fit: cover;
+}
+
+.payment-product-details {
+    flex: 1;
+    padding: 0 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.payment-product-brand {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+.payment-product-name {
+    font-size: 15px;
+    color: #555;
+    margin: 4px 0 8px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 가격 스타일링 */
+.payment-product-price {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: 16px;
+    font-weight: 700;
+    min-width: 120px;
+}
+
+.payment-normal-price {
+    color: #111;
+}
+
+/* 세일 가격 */
+.payment-original-price {
+    font-size: 14px;
+    color: #aaa;
+    text-decoration: line-through;
+}
+
+.payment-sale-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.payment-sale-percentage {
+    color: #fa5252;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.payment-sale-price {
+    color: #111;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.payment-total-price-container {
+    margin-top: 24px;
+    padding: 16px;
+    text-align: right;
+    font-size: 20px;
+    font-weight: 700;
+    border-top: 2px solid #eee;
+}
+
+.payment-total-price {
+    color: #111; /* 강조 색상 */
+    margin-left: 8px;
+}
+
+.payment-order-details-button-container {
+    margin-top: 16px;
+    text-align: center; /* ✅ center button */
+}
+
+.payment-order-details-button {
+    background-color: #fff; /* ✅ white background */
+    color: #111;           /* ✅ black text */
+    font-size: 16px;
+    font-weight: 600;
+    padding: 10px 20px;
+    border: 2px solid #111; /* ✅ add black border for contrast */
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.payment-order-details-button:hover {
+    background-color: #111; /* invert on hover */
+    color: #fff;
+}
+
+
+/* 반응형 1250px */
+@media (max-width: 1250px) {
+
+    /* 상품 이름이 두 줄로 표시되도록 줄바꿈 처리 */
+    .payment-product-name {
+        /* 한 줄 생략(...) 대신 줄바꿈 허용 */
+        white-space: normal;
+        /* 한글 단어 중간에 잘리지 않도록 함 */
+        word-break: keep-all;
+    }
+
+    .payment-product-brand {
+        font-size: clamp(12px, 3.5vw, 14px);
+    }
+
+    .payment-product-name {
+        font-size: clamp(13px, 4vw, 15px);
+    }
+
+    .payment-product-price,
+    .payment-sale-price,
+    .payment-sale-percentage {
+        font-size: clamp(14px, 4.2vw, 16px);
+    }
+
+    .payment-original-price {
+        font-size: clamp(12px, 3.5vw, 14px);
+    }
+}
+
+/* 반응형 768px */
+@media (max-width: 768px) {
+    .main-layout {
+        flex-direction: column;
+    }
+}

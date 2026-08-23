@@ -10,20 +10,15 @@ import { ChevronRightIcon } from '../components/CustomTag';
 function OrderItem({ orderProducts }) {
     const isMobile = useMediaQuery("(max-width: 768px)");
 
-    // 결제정보
-    const [payInfoPopupOpen, payInfoPopup] = useState(null);
-    const setPayInfoPopupOpen = (order) => {
-        payInfoPopup(order);
-    };
-    const handleCloseModal = () => {
-        payInfoPopup(null);
+    const [payInfoPopupItem, setPayInfoPopupItem] = useState(null);
+    const handleClosePayModal = () => {
+        setPayInfoPopupItem(null);
     };
 
-    // 리뷰작성
-    const [reviewPopupOpen, setReviewPopupOpen] = useState(false);
-    const handleReviewPopup = () => {
-        setReviewPopupOpen(false);
-    }
+    const [reviewPopupItem, setReviewPopupItem] = useState(null);
+    const handleCloseReviewPopup = () => {
+        setReviewPopupItem(null);
+    };
     return (
         <div className="order-list">
             {orderProducts.length === 0 ? (
@@ -43,7 +38,7 @@ function OrderItem({ orderProducts }) {
                                 <div className="order-product-mobile">
                                     <img src={item.imgSrc} alt="상품 이미지" className="product-image" />
                                     <div className="pay-btn-area">
-                                        <button className="pay-btn-mobile" onClick={() => setPayInfoPopupOpen(item)}>
+                                        <button className="pay-btn-mobile" onClick={() => setPayInfoPopupItem(item)}>
                                             결제정보
                                         </button>
                                         <ChevronRightIcon className="pay-chev-icon" />
@@ -55,7 +50,7 @@ function OrderItem({ orderProducts }) {
                                         <p className="product-price">{item.price} 원</p>
                                     </div>
                                     {item.deliveryStatus === "배송완료" && (
-                                        <button className="review-btn-mobile" onClick={() => setReviewPopupOpen(true)}>
+                                        <button className="review-btn-mobile" onClick={() => setReviewPopupItem(item)}>
                                             리뷰 작성
                                         </button>
                                     )}
@@ -87,9 +82,9 @@ function OrderItem({ orderProducts }) {
                                     <p className="delivery-status">{item.deliveryStatus}</p>
                                 </div>
                                 <div className="order-list-button-area">
-                                    <button className="pay-btn" onClick={() => setPayInfoPopupOpen(item)}>결제정보</button>
+                                    <button className="pay-btn" onClick={() => setPayInfoPopupItem(item)}>결제정보</button>
                                     {item.deliveryStatus === "배송완료" && (
-                                        <button className="review-btn" onClick={() => setReviewPopupOpen(true)}>리뷰 작성</button>
+                                        <button className="review-btn" onClick={() => setReviewPopupItem(item)}>리뷰 작성</button>
                                     )}
                                 </div>
                             </>)}
@@ -98,16 +93,16 @@ function OrderItem({ orderProducts }) {
             )}
             <Pagination count={10} color="primary" />
             <PopUp
-                isOpen={payInfoPopupOpen}
-                onClose={handleCloseModal}
+                isOpen={Boolean(payInfoPopupItem)}
+                onClose={handleClosePayModal}
                 title={"주문 결제정보"}
-                component={<OrderItemPayInfoPopup item={payInfoPopupOpen} />}
+                component={<OrderItemPayInfoPopup item={payInfoPopupItem} />}
             />
             <PopUp
-                isOpen={reviewPopupOpen}
-                onClose={(handleReviewPopup)}
+                isOpen={Boolean(reviewPopupItem)}
+                onClose={handleCloseReviewPopup}
                 title={"리뷰 작성"}
-                component={<OrderItemReviewPopup />}
+                component={reviewPopupItem ? (<OrderItemReviewPopup productId={reviewPopupItem.productId} boardId={reviewPopupItem.boardId} onClose={handleCloseReviewPopup} />) : null}
             />
         </div>
     )

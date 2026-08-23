@@ -2,10 +2,13 @@ import "./MyPageInquiry.css"
 import SideNavigation from "../components/SideNavigation"
 import InquiryItem from "../components/InquiryItem"
 import MyPageHeader from "../components/MyPageHeader";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import api from "../api/axios";
 
 const MyPageInquiry = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [inquiries, setInquiries] = useState([]);
+    const [loading, setLoading] = useState(false);
 
     let sideMenu = [
         {
@@ -50,45 +53,73 @@ const MyPageInquiry = () => {
         }
     ]
 
-    let item = [
-        {
-            imageUrl: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=100&h=100&fit=crop&crop=center",
-            brand: "유닉스",
-            productName: "오브제 헤어 드라이기 UN-B1919N",
-            title: "색상 재문의",
-            date: "2025.03.15",
-            content: "안녕하세요. 분홍색 말고 노란색은 없나요? 저는 노란색이 너무 좋아요. 노란색이 없으면 하늘색이라도 주세요.",
-            replyStatus: 0
-        },
-        {
-            imageUrl: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=100&h=100&fit=crop&crop=center",
-            brand: "유닉스",
-            productName: "오브제 헤어 드라이기 UN-B1919N",
-            title: "색상 문의",
-            date: "2025.02.13",
-            content: "안녕하세요. 분홍색 말고 노란색은 없나요? 저는 노란색이 너무 좋아요. 노란색이 없으면 하늘색이라도 주세요.",
-            replyStatus: 1,
-            response: {
-                greeting: "안녕하십니까, 유닉스입니다.",
-                content: "저희 상품에 관심 가져주셔서 감사합니다. 유닉스 오브제 헤어 드라이기 UN-B1919N 제품은 현재 분홍 색상만 판매하고 있습니다. 양해 부탁드립니다.",
-                closing: "감사합니다."
-            }
+    const getInquiryList = async () => {
+        try {
+            setLoading(true);
+
+            const response = await api.get("/inquiry/user/list");
+
+            console.log(response.data);
+
+            const inquiryList = response.data.inquiries || [];
+
+            const convertedList = inquiryList.map((inquiry) => ({
+                id: inquiry.inquiryNo,
+                inquiryNo: inquiry.inquiryNo,
+                productNo: inquiry.productNo,
+                imageUrl: inquiry.productImageUrl,
+                brand: inquiry.brandName,
+                productName: inquiry.productName,
+                title: inquiry.title,
+                date: formatDate(inquiry.regDate),
+                content: inquiry.content,
+                replyStatus: inquiry.answered ? 1 : 0,
+                response: inquiry.answered ? inquiry.answerContent : null
+            }));
+
+            setInquiries(convertedList);
+        } catch (err) {
+            console.error("문의 목록 조회 실패:", err);
+            alert("문의 목록을 불러오지 못했습니다.");
+        } finally {
+            setLoading(false);
         }
-    ]
+    };
+
+    useEffect(() => {
+        getInquiryList();
+    }, []);
+
+    const formatDate = (dateTime) => {
+        if (!dateTime) return "";
+
+        const date = new Date(dateTime);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+
+        return `${year}.${month}.${day}`;
+    };
 
     return (
         <>
-            <MyPageHeader title={"문의내역 (고객문의)"} toggleSidebar={() => setIsSidebarOpen(true)}/>
+            <MyPageHeader title={"문의내역 (고객문의)"} toggleSidebar={() => setIsSidebarOpen(true)} />
 
             <div className="main-layout">
                 {/* 사이드 네비게이션 메뉴 */}
-                <SideNavigation sideMenu={sideMenu} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)}/>
+                <SideNavigation sideMenu={sideMenu} isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
                 {/* 메인 콘텐츠 */}
                 <main className="main-content">
                     {/* 문의 목록 */}
                     <div className="inquiry-list">
-                        {item.map((data, index) => (
+                        {loading && <p>문의 목록을 불러오는 중입니다.</p>}
+
+                        {!loading && inquiries.length === 0 && (
+                            <p>등록된 문의가 없습니다.</p>
+                        )}
+
+                        {!loading && inquiries.map((data, index) => (
                             <InquiryItem key={data.id || index} item={data} />
                         ))}
                     </div>

@@ -52,6 +52,8 @@ const MyPageOrderList = () => {
 
     let orderProducts = [
         {
+            productId: 1,
+            boardId: 1,
             orderDate: "2025.03.16",
             recipient: "김철수",
             imgSrc: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=100&h=100&fit=crop&crop=center",
@@ -63,6 +65,8 @@ const MyPageOrderList = () => {
             deliveryStatus: "배송완료"
         },
         {
+            productId: 2,
+            boardId: 2,
             orderDate: "2025.02.14",
             recipient: "김철수",
             imgSrc: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=100&h=100&fit=crop&crop=center",

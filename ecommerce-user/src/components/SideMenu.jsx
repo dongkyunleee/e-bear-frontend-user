@@ -2,13 +2,34 @@ import React, { useState, useEffect } from 'react';
 import './SideMenu.css';
 import { ChevronRightIcon } from '../components/CustomTag';
 import { Link } from 'react-router-dom';
+import api from "../api/axios.js";
 
 function SideMenu({ onClose }) {
+    const [ecommerceMenu, setEcommerceMenu] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     
-    /* 비동기 데이터 처리 시 사용 */
-    const [ecommerceMenu, setEcommerceMenu] = useState([]); //메뉴 배열
-    const [isLoading, setIsLoading] = useState(true); //로딩 상태
+    const transformToMenuTree = (categoryList, currentDepth = 1) => {
+        if (!categoryList || !Array.isArray(categoryList)) return [];
     
+        return categoryList.map(item => {
+            const hasChildren = item.childCategory && item.childCategory.length > 0;
+            const shouldRecurse = hasChildren && currentDepth < 3;
+            
+            const mappedItem = {
+                title: item.categoryName,
+                categoryId: item.categoryId,
+                categoryValue: item.categoryValue,
+                subMenu: shouldRecurse ? transformToMenuTree(item.childCategory, currentDepth + 1) : []
+            };
+    
+            if (!shouldRecurse) {
+                mappedItem.link = `/product-list/${item.categoryId}`; 
+            }
+    
+            return mappedItem;
+        });
+    };
+
     useEffect(() => {
         // DB에서 데이터를 가져오는 비동기 함수를 정의합니다.
         const fetchMenuData = async () => {
@@ -18,187 +39,10 @@ function SideMenu({ onClose }) {
                 // 실제 DB/API 호출 로직을 여기에 작성
                 // 예: const response = await fetch('/api/getMenu');
                 // 예: const data = await response.json();
-                
-                // 현재는 임시 데이터(mockData)를 사용한다고 가정
-                const mockData = [ /* 기존 ecommerceMenu 배열 내용 전체 */
-                    {
-                        title: "브랜드패션",
-                        subMenu: [
-                            {
-                                title: "패션의류",
-                                subMenu: [
-                                    { title: "여성의류", link: "/product-list" },
-                                    { title: "남성의류", link: "/product-list" },
-                                    { title: "언더웨어", link: "/product-list" },
-                                    { title: "유아동의류", link: "/product-list" },
-                                ]
-                            },
-                            {
-                                title: "잡화",
-                                subMenu: [
-                                    { title: "신발", link: "/product-list" },
-                                    { title: "가방/잡화", link: "/product-list" },
-                                    { title: "유아동신발/잡화", link: "/product-list" },
-                                    { title: "쥬얼리/시계", link: "/product-list" },
-                                    { title: "수입명품", link: "/product-list" },
-                                ]
-                            },
-                            {
-                                title: "뷰티",
-                                subMenu: [
-                                    { title: "화장품/향수", link: "/product-list" },
-                                    { title: "바디/헤어", link: "/product-list" },
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        title: "유아동",
-                        subMenu: [
-                            {
-                                title: "유아동 의류",
-                                subMenu: [
-                                    { title: "신생아", link: "/product-list" },
-                                    { title: "유아", link: "/product-list" },
-                                    { title: "키즈", link: "/product-list" },
-                                ]
-                            },
-                            {
-                                title: "유아동 용품",
-                                subMenu: [
-                                    { title: "이유식", link: "/product-list" },
-                                    { title: "기저귀", link: "/product-list" },
-                                    { title: "수유용품", link: "/product-list" },
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        title: "식품·생필품",
-                        subMenu: [
-                            {
-                                title: "식품",
-                                subMenu: [
-                                    { title: "신선식품", link: "/product-list" },
-                                    { title: "가공식품", link: "/product-list" },
-                                    { title: "냉동식품", link: "/product-list" },
-                                ]
-                            },
-                            {
-                                title: "생필품",
-                                subMenu: [
-                                    { title: "세제", link: "/product-list" },
-                                    { title: "화장지", link: "/product-list" },
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        title: "홈데코ㆍ문구ㆍ취미ㆍ반려",
-                        subMenu: [
-                            {
-                                title: "홈데코",
-                                subMenu: [
-                                    { title: "침구", link: "/product-list" },
-                                    { title: "커튼", link: "/product-list" },
-                                ]
-                            },
-                            {
-                                title: "문구",
-                                subMenu: [
-                                    { title: "필기구", link: "/product-list" },
-                                    { title: "다이어리", link: "/product-list" },
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        title: "컴퓨터·디지털·가전",
-                        subMenu: [
-                            {
-                                title: "컴퓨터",
-                                subMenu: [
-                                    { title: "노트북", link: "/product-list" },
-                                    { title: "데스크탑", link: "/product-list" },
-                                ]
-                            },
-                            {
-                                title: "디지털",
-                                subMenu: [
-                                    { title: "스마트폰", link: "/product-list" },
-                                    { title: "태블릿", link: "/product-list" },
-                                ]
-                            },
-                            {
-                                title: "가전",
-                                subMenu: [
-                                    { title: "TV", link: "/product-list" },
-                                    { title: "냉장고", link: "/product-list" },
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        title: "스포츠·건강·렌탈",
-                        subMenu: [
-                            {
-                                title: "스포츠",
-                                subMenu: [
-                                    { title: "운동화", link: "/product-list" },
-                                    { title: "운동복", link: "/product-list" },
-                                ]
-                            },
-                            {
-                                title: "건강",
-                                subMenu: [
-                                    { title: "건강식품", link: "/product-list" },
-                                    { title: "운동기구", link: "/product-list" },
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        title: "자동차·공구",
-                        subMenu: [
-                            {
-                                title: "자동차용품",
-                                subMenu: [
-                                    { title: "차량용품", link: "/product-list" },
-                                    { title: "모터오일", link: "/product-list" },
-                                ]
-                            },
-                            {
-                                title: "공구",
-                                subMenu: [
-                                    { title: "전동공구", link: "/product-list" },
-                                    { title: "수동공구", link: "/product-list" },
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        title: "여행ㆍ도서·e쿠폰",
-                        subMenu: [
-                            {
-                                title: "여행",
-                                subMenu: [
-                                    { title: "항공권", link: "/product-list" },
-                                    { title: "호텔", link: "/product-list" },
-                                ]
-                            },
-                            {
-                                title: "도서",
-                                subMenu: [
-                                    { title: "도서", link: "/product-list" },
-                                    { title: "e북", link: "/product-list" },
-                                ]
-                            }
-                        ]
-                    }
-                ];
-
+                const response = await api.get(`/category/list`);
+                const data = transformToMenuTree(response.data);
                 // 데이터 상태에 저장
-                setEcommerceMenu(mockData); 
+                setEcommerceMenu(data); 
             } catch (error) {
                 console.error("메뉴 데이터를 불러오는 데 실패했습니다:", error);
                 // 에러 처리 (예: 빈 메뉴 표시, 에러 메시지 표시)

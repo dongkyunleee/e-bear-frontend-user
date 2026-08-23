@@ -9,18 +9,18 @@ import './QnaAccordion.css';
 function QnaAccordion({ data, index, handleChange, isExpanded  }) {
   
     return (
-        <Accordion key={index} expanded={isExpanded} onChange={handleChange(data.id)}>
+        <Accordion key={index} expanded={isExpanded} onChange={handleChange(data.qnaId)}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel3bh-content" id="panel3bh-header">
                 <Typography component="span" sx={{ width: '33%', flexShrink: 0 }}>
-                    {data.name}
+                    {data.seller}
                 </Typography>
                 <Typography component="span" sx={{ color: 'text.secondary' }}>
-                    {data.title}
+                    {data.content}
                 </Typography>
             </AccordionSummary>
             <AccordionDetails>
                 <Typography>
-                    {data.context}
+                    {data.replyContent}
                 </Typography>
             </AccordionDetails>
         </Accordion>

@@ -2,36 +2,13 @@ import "./MyPageInquiryReport.css"
 import SideNavigation from "../components/SideNavigation"
 import InquiryItem from "../components/InquiryItem"
 import MyPageHeader from "../components/MyPageHeader";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import api from "../api/axios";
 
 const MyPageInquiryReport = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  let item = [
-    {
-      imageUrl: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=100&h=100&fit=crop&crop=center",
-      brand: "유닉스",
-      productName: "오브제 헤어 드라이기 UN-B1919N",
-      title: "유닉스 상품 재신고합니다",
-      content: "안녕하세요. 저는 노란색이 좋아서 노란색으로 사고 싶은데, 분홍색만 판다고 해서 신고합니다. 조치해 주세요.",
-      date: "2025.03.15",
-      replyStatus: 0
-    },
-    {
-      imageUrl: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=100&h=100&fit=crop&crop=center",
-      brand: "유닉스",
-      productName: "오브제 헤어 드라이기 UN-B1919N",
-      title: "유닉스 상품 신고합니다",
-      content: "안녕하세요. 저는 노란색이 좋아서 노란색으로 사고 싶은데, 분홍색만 판다고 해서 신고합니다. 조치해 주세요.",
-      date: "2025.02.13",
-      replyStatus: 1,
-      response: {
-        greeting: "안녕하십니까, eBear입니다.",
-        content: "판매 제품의 색상, 수량 등에 관한 사항은 판매자 재량 영역으로, eBear 자체에서 강제할 수 없는 점 양해 부탁드립니다.",
-        closing: "앞으로도 eBear에 많은 관심 부탁드립니다. 감사합니다."
-      }
-    }
-  ]
+  const [report, setReport] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   let sideMenu = [
     {
@@ -74,7 +51,55 @@ const MyPageInquiryReport = () => {
     {
         title: "회원탈퇴"
     }
-  ]
+  ];
+
+  const getReportList = async () => {
+    try {
+        setLoading(true);
+
+        const response = await api.get("/report/user/list");
+
+        console.log(response.data);
+
+        const reportList = response.data.reports || [];
+
+        const convertedList = reportList.map((report) => ({
+            id: report.reportNo,
+            reportNo: report.reportNo,
+            productNo: report.productNo,
+            imageUrl: report.productImageUrl,
+            brand: report.brandName,
+            productName: report.productName,
+            title: report.title,
+            date: formatDate(report.regDate),
+            content: report.content,
+            replyStatus: report.answered ? 1 : 0,
+            response: report.answered ? report.answerContent : null
+        }));
+
+        setReport(convertedList);
+    } catch (err) {
+        console.error("문의 목록 조회 실패:", err);
+        alert("문의 목록을 불러오지 못했습니다.");
+    } finally {
+        setLoading(false);
+    }
+};
+
+useEffect(() => {
+    getReportList();
+}, []);
+
+const formatDate = (dateTime) => {
+    if (!dateTime) return "";
+
+    const date = new Date(dateTime);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}.${month}.${day}`;
+};
 
   return (
     <>
@@ -86,11 +111,15 @@ const MyPageInquiryReport = () => {
         
         {/* 메인 콘텐츠 */}
         <main className="main-content">
-          {/* 문의 목록 */}
           <div className="inquiry-list">
-            {/* 첫 번째 문의 */}
-              {item.map((data, index) => (
-                <InquiryItem key={data.id || index} item={data} />
+            {loading && <p>신고 목록을 불러오는 중입니다.</p>}
+
+              {!loading && report.length === 0 && (
+                  <p>등록된 신고가 없습니다.</p>
+              )}
+
+              {!loading && report.map((data, index) => (
+                  <InquiryItem key={data.id || index} item={data} />
               ))}
           </div>
         </main>

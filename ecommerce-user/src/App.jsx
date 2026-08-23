@@ -17,11 +17,22 @@ import SignupTermsAgreement from "./pages/SignupTermsAgreement"
 import ProductListPage from "./pages/ProductListPage"
 import MyPageCurrentView from "./pages/MyPageCurrentView"
 import ProductViewPage from "./pages/ProductViewPage"
+
+import PaymentComplete from "./pages/PaymentComplete"
+
 import CommonError from "./pages/CommonError"
 import { CloseIcon, MessageIcon } from "./components/CustomTag"
 import { useState } from "react"
 import Chat from "./components/Chat"
 import PaymentPage from "./pages/PaymentPage"
+
+//토스 테스트
+import { createRoot } from 'react-dom/client';
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { CheckoutPage } from './pages/toss/CheckoutPage';
+import { SuccessPage } from './pages/toss/SuccessPage';
+import { FailPage } from './pages/toss/FailPage';
+import './pages/toss/style.css';
 
 function App() {
   const [isMessageOpen, setIsMessageOpen] = useState(false);
@@ -55,10 +66,16 @@ function App() {
         <Route path="/mypage/wishlist" element={<MyPageWishlist />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/signuptermsagreement" element={<SignupTermsAgreement />} />
-        <Route path="/product-list" element={<ProductListPage />} />
+        <Route path="/product-list/:id" element={<ProductListPage />} />
         <Route path="/mypage/currentview" element={<MyPageCurrentView />} />
         <Route path="/product/view/:id" element={<ProductViewPage />} />
-        <Route path="/payment" element={<PaymentPage />} />
+        <Route path="/payment/:id" element={<PaymentPage />} />
+        <Route path="/payment/complete" element={<PaymentComplete />} />
+        {/* 토스 테스트 */}
+        <Route path="/toss" element={<CheckoutPage />} />
+        <Route path="/toss/success" element={<SuccessPage />} />
+        <Route path="/toss/fail" element={<FailPage />} />
+
       </Routes>
       {isMessageOpen && (
         <Chat />

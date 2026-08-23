@@ -1,11 +1,13 @@
 import React from 'react';
 import './Product.css';
+import { useNavigate } from "react-router-dom";
 
 function Product({product}) {
     const formatPrice = (price) => price.toLocaleString('ko-KR');
-    
+    const navigate = useNavigate();
+
     return (
-        <div key={product.id} className="product-card">
+        <div key={product.id} className="product-card" onClick={() => navigate(`/product/view/${product.id}`)}>
             <div className="product-image-container">
                 <img src={product.imageUrl || 'https://via.placeholder.com/300'} alt={product.name} />
             </div>

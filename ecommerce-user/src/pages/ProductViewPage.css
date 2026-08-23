@@ -282,6 +282,24 @@
     font-weight: bold;
 }
 
+.report-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #FF0038;
+}
+.report-button {
+    border: 1px solid #FF0038;
+    border-radius: 5px;
+    background-color: #FF0038;
+    color: #ffffff;
+    height: 30px;
+}
+
 @media (max-width: 768px) {
     .product-view-contents-right-area {
         display: none;

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate, Navigate } from "react-router-dom"; 
-import "./PaymentComplete.css"
+import "./PaymentCompleteDetail.css"
 import Headers from "../components/Headers"
 import Footer from "../components/Footer"
 import Navigation from "../components/Navigation"
@@ -129,9 +129,7 @@ const PaymentComplete = () => {
 
                     {/* 주문내역 보기 버튼 */}
                     <div className="payment-order-details-button-container">
-                    <button 
-                        className="payment-order-details-button"
-                        onClick={() => navigate('./PaymentCompleteDetail')}>주문내역 보기</button>
+                    <button className="payment-order-details-button">주문내역 보기</button>
                     </div>
                 </main>
             </div>
