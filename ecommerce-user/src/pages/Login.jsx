@@ -17,23 +17,18 @@ const Login = () => {
         }
 
         try {
-            const response = await api.post("/login", {
-                userId: loginId,
-                password: pw
-            });
+            const data = await api.post("/login", {
+                    userId: id,
+                    password: pw
+                });
 
-            const token =
-                response.headers?.access_token ??
-                response.headers?.ACCESS_TOKEN ??
-                response.data?.token ??
-                response.data?.accessToken;
+            const token = data?.token ?? data?.accessToken;
 
-            if (token) {
-                localStorage.setItem("token", token);
-            }
+            if (token) localStorage.setItem("token", token);
+            // console.log(token);
+            alert("로그인 성공!");
             navigate("/");
         } catch (err) {
-            console.log(err);
             const body = err.response?.data;
             const msg =
                 (typeof body === "string" ? body : body?.message ?? body?.error) ||
